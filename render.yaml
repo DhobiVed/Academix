@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: academix
+    env: python
+    pythonVersion: 3.11.9
+    startCommand: gunicorn classmanager.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: classmanager.settings
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
