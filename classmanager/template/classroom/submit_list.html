@@ -1,0 +1,143 @@
+{% extends 'classroom/base.html' %}
+{% block content %}
+
+<style>
+  /* Container and Jumbotron */
+  .container {
+    margin-top: 40px;
+  }
+
+  .jumbotron {
+    padding: 2rem 2rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Alert styling */
+  .alert {
+    animation: slideIn 0.5s ease forwards;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Table styling */
+  .table {
+    margin-top: 30px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    background: #fff;
+  }
+
+  .table thead {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    color: white;
+  }
+
+  .table tbody tr {
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .table tbody tr:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  }
+
+  .btn-primary {
+    background-color: #7f5af0;
+    border-color: #7f5af0;
+    transition: all 0.3s;
+  }
+
+  .btn-primary:hover {
+    background-color: #9277f2;
+    transform: scale(1.05);
+  }
+
+  .btn-danger {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+    transition: all 0.3s;
+  }
+
+  .btn-danger:hover {
+    background-color: #ff8787;
+    transform: scale(1.05);
+  }
+
+  h2 {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 600;
+    color: #ffeb3b;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  }
+</style>
+
+<div class="container">
+  <div class="jumbotron">
+    {% if messages %}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      {% for message in messages %}
+        <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+      {% endfor %}
+      <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endif %}
+
+    {% if teacher.teacher_submit.count == 0 %}
+      <h2>No Submissions Yet</h2>
+    {% else %}
+      <table class="table table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Submitted By</th>
+            <th scope="col">Assignment</th>
+            <th scope="col">Submitted on</th>
+            <th scope="col">Download</th>
+            <th scope="col">Enter Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for submission in teacher.teacher_submit.all %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ submission.student.name }}</td>
+              <td>{{ submission.submitted_assignment.assignment_name }}</td>
+              <td>{{ submission.created_at|date:"d M, Y H:i" }}</td>
+              <td>
+                <a href="{{ submission.submit.url }}" class="btn btn-primary btn-sm" target="_blank">
+                  <i class="bi bi-download"></i> Download
+                </a>
+              </td>
+              <td>
+                <a class="btn btn-danger btn-sm" href="{% url 'classroom:enter_marks' pk=submission.student.pk %}">
+                  <i class="bi bi-pencil-square"></i> Enter Marks
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "classroom/base.html" %}
+{% block content %}
+
+<style>
+  /* 🌈 Background animation */
+  body {
+    background: linear-gradient(135deg, #1E3A8A, #7C3AED, #E91E63);
+    background-size: 400% 400%;
+    animation: gradientShift 14s ease infinite;
+    font-family: "Poppins", sans-serif;
+    color: #fff;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* 🧊 Glassmorphic container */
+  .marks-container {
+    max-width: 900px;
+    margin: 6% auto;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    animation: fadeIn 1s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h2 {
+    text-align: center;
+    font-weight: 700;
+    color: #f9fafb;
+    margin-bottom: 1rem;
+  }
+
+  /* 💫 Animated divider */
+  hr {
+    width: 100px;
+    height: 3px;
+    border: none;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #7C3AED, #E91E63);
+    margin: 1rem auto 2rem;
+    animation: glowLine 2s infinite alternate;
+  }
+
+  @keyframes glowLine {
+    from { box-shadow: 0 0 10px #7C3AED; }
+    to { box-shadow: 0 0 20px #E91E63; }
+  }
+
+  /* 📊 Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 15px;
+  }
+
+  thead {
+    background: linear-gradient(90deg, #7C3AED, #E91E63);
+    color: white;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    animation: fadeRow 0.5s ease forwards;
+  }
+
+  tbody tr:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.01);
+  }
+
+  @keyframes fadeRow {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 🚫 Empty state animation */
+  .no-marks {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #f9fafb;
+    font-weight: 600;
+    animation: fadePop 1s ease;
+  }
+
+  @keyframes fadePop {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* 🎉 Floating icon animation */
+  .no-marks i {
+    display: block;
+    font-size: 3rem;
+    color: #E91E63;
+    animation: floatIcon 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes floatIcon {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+  }
+
+</style>
+
+<div class="container">
+  <div class="marks-container">
+    {% if student.marks.count == 0 %}
+      <div class="no-marks">
+        <i class="bi bi-emoji-frown"></i>
+        <p>No marks are published yet!</p>
+      </div>
+    {% else %}
+      <h2><i class="bi bi-bar-chart-fill"></i> Marks Overview</h2>
+      <hr>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Sr. No.</th>
+            <th>Subject</th>
+            <th>Teacher Name</th>
+            <th>Marks Obtained</th>
+            <th>Max Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for object in student.marks.all %}
+          <tr style="animation-delay: {{ forloop.counter0|add:"1" }}00ms;">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ object.subject_name }}</td>
+            <td>{{ object.teacher.name }}</td>
+            <td>{{ object.marks_obtained }}</td>
+            <td>{{ object.maximum_marks }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+{% endblock %}

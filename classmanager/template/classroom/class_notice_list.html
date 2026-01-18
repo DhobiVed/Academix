@@ -1,0 +1,366 @@
+{% extends 'classroom/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+/* --- Base Container --- */
+.notices-container {
+    min-height: 100vh;
+    background: radial-gradient(circle at 30% 50%, #0f002b, #000010 70%);
+    padding: 60px 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.notices-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 80%, rgba(0,255,255,0.1), transparent 70%),
+                radial-gradient(circle at 80% 20%, rgba(255,0,255,0.1), transparent 70%);
+    filter: blur(40px);
+    animation: nebula 20s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes nebula {
+    0% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+    100% { transform: scale(1.1) rotate(2deg); opacity: 0.9; }
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+}
+
+/* --- Animated Title --- */
+.notice-title {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 50px;
+    position: relative;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #00f3ff, #ff00ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 300%;
+    animation: gradientFlow 6s linear infinite;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.3));
+    transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.notice-title::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, #00f3ff, #ff00ff);
+    border-radius: 2px;
+    animation: underlinePulse 3s ease-in-out infinite;
+}
+
+.notice-title:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 25px rgba(0,255,255,0.6));
+}
+
+/* glowing pulse effect on the title text */
+.glow {
+    animation: glowPulse 2.5s ease-in-out infinite alternate;
+}
+
+/* Gradient shimmer animation */
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* Underline subtle pulse */
+@keyframes underlinePulse {
+    0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.8; }
+    50% { transform: translateX(-50%) scaleX(1.3); opacity: 1; }
+}
+
+/* Soft neon glow animation */
+@keyframes glowPulse {
+    from {
+        text-shadow: 
+            0 0 10px #00f3ff,
+            0 0 20px #00f3ff,
+            0 0 40px #ff00ff;
+    }
+    to {
+        text-shadow: 
+            0 0 20px #ff00ff,
+            0 0 40px #00f3ff,
+            0 0 60px #00ff88;
+    }
+}
+
+/* --- Empty State --- */
+.empty-state {
+    text-align: center;
+    padding: 120px 20px;
+    color: #fff;
+}
+
+.empty-state i {
+    font-size: 5rem;
+    color: #00f3ff;
+    text-shadow: 0 0 30px rgba(0,243,255,0.4);
+    animation: floatBell 4s ease-in-out infinite;
+}
+
+@keyframes floatBell {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.empty-state h2 {
+    margin-top: 20px;
+    font-size: 2.3rem;
+    background: linear-gradient(45deg, #00f3ff, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+.empty-state p {
+    opacity: 0.7;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* --- Notice Counter --- */
+.notice-counter {
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    color: #00ffcc;
+    border-radius: 14px;
+    padding: 15px 30px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 5px 20px rgba(0,255,255,0.1);
+}
+
+/* --- Notice Grid --- */
+.notice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+/* --- Notice Card --- */
+.notice {
+    position: relative;
+    background: rgba(20, 20, 40, 0.8);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(25px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    overflow: hidden;
+    animation: fadeSlideUp 0.7s ease forwards;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.notice::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(130deg, #00f3ff33, #ff00ff33, #00ff8833);
+    background-size: 400%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    border-radius: 20px;
+}
+
+.notice:hover::before {
+    opacity: 1;
+    animation: borderPulse 4s linear infinite;
+}
+
+@keyframes borderPulse {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notice:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+/* --- Notice Header --- */
+.notice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.teacher-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.notice-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #00f3ff;
+    box-shadow: 0 0 15px rgba(0,243,255,0.3);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.notice:hover .notice-img {
+    transform: scale(1.1);
+    border-color: #ff00ff;
+}
+
+.teacher-details h5 {
+    color: #00ff88;
+    font-weight: 600;
+    margin: 0;
+}
+
+.teacher-details .subject {
+    color: #00f3ff;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.notice-date {
+    background: rgba(255,0,255,0.1);
+    padding: 6px 12px;
+    border-radius: 10px;
+    color: #ff00ff;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* --- Message --- */
+.notice-message {
+    margin-top: 15px;
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    border-left: 4px solid #00f3ff;
+    border-radius: 10px;
+    transition: all 0.4s ease;
+}
+
+.notice:hover .notice-message {
+    border-left-color: #ff00ff;
+    background: rgba(255,255,255,0.07);
+}
+
+.notice-message h2 {
+    font-size: 1.2rem;
+    color: #fff;
+    line-height: 1.6;
+}
+
+/* --- Scroll Button --- */
+.scroll-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(45deg, #00f3ff, #9d00ff);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: #fff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 5px 20px rgba(0,243,255,0.5);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.scroll-top:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,243,255,0.7);
+}
+</style>
+
+<div class="notices-container">
+    <div class="container">
+
+        <!-- Animated Title -->
+        <h1 class="notice-title"><span class="glow">📢 Class Notices</span></h1>
+
+        {% if student.class_notice.count == 0 %}
+            <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h2>No Notices Yet</h2>
+                <p>When your teacher posts notices, they’ll appear here. Stay tuned!</p>
+            </div>
+        {% else %}
+            <div class="notice-counter">
+                <i class="fas fa-bell"></i>
+                <span>{{ student.class_notice.count }} Notice{{ student.class_notice.count|pluralize }}</span>
+            </div>
+
+            <div class="notice-grid">
+                {% for notice in student.class_notice.all %}
+                <div class="notice">
+                    <div class="notice-header">
+                        <div class="teacher-info">
+                            {% if notice.teacher.teacher_profile_pic %}
+                            <img src="{{ notice.teacher.teacher_profile_pic.url }}" class="notice-img" alt="{{ notice.teacher.name }}">
+                            {% else %}
+                            <img src="{% static 'images/login-avatar.PNG' %}" class="notice-img" alt="Default Avatar">
+                            {% endif %}
+                            <div class="teacher-details">
+                                <h5><i class="fas fa-user-tie"></i> {{ notice.teacher.name }}</h5>
+                                <div class="subject"><i class="fas fa-book"></i> {{ notice.teacher.subject_name }}</div>
+                            </div>
+                        </div>
+                        <div class="notice-date"><i class="far fa-clock"></i> {{ notice.created_at|date:"M d, Y • h:i A" }}</div>
+                    </div>
+
+                    <div class="notice-message">
+                        <h2>{{ notice.message_html|safe }}</h2>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <a href="#" class="scroll-top" id="scrollTop"><i class="fas fa-chevron-up"></i></a>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const scrollTop = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+        scrollTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+    });
+    scrollTop.addEventListener('click', e => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+});
+</script>
+
+{% endblock %}

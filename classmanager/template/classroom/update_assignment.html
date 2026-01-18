@@ -1,0 +1,114 @@
+{% extends 'classroom/base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .update-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        border-radius: 20px 20px 0 0;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .card-header-custom h2 {
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    form p label {
+        font-weight: 600;
+        color: #444;
+    }
+
+    form p input,
+    form p textarea,
+    form p select {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        transition: all 0.3s ease;
+    }
+
+    form p input:focus,
+    form p textarea:focus,
+    form p select:focus {
+        border-color: #ff416c;
+        box-shadow: 0 0 10px rgba(255,65,108,0.3);
+        outline: none;
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        color: white;
+        border-radius: 30px;
+        padding: 10px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-update:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255,65,108,0.4);
+        color: white;
+    }
+
+    .btn-cancel {
+        border-radius: 30px;
+        padding: 10px 30px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="update-card">
+
+                <div class="card-header-custom">
+                    <h2>Update Assignment</h2>
+                    <p class="mb-0">Edit and improve your assignment details</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-update">
+                                🚀 Update
+                            </button>
+                            <a href="javascript:history.back()" class="btn btn-secondary btn-cancel ml-2">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

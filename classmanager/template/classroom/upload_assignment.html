@@ -1,0 +1,682 @@
+{% extends 'classroom/base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+{% block content %}
+
+<style>
+    :root {
+        --primary: #4361ee;
+        --secondary: #3a0ca3;
+        --accent: #7209b7;
+        --success: #4cc9f0;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gradient: linear-gradient(135deg, #4361ee, #3a0ca3, #7209b7);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    .upload-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7ff 0%, #e6ecff 100%);
+        padding: 40px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .upload-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 15% 50%, rgba(67, 97, 238, 0.1) 0%, transparent 20%),
+            radial-gradient(circle at 85% 30%, rgba(114, 9, 183, 0.1) 0%, transparent 20%),
+            radial-gradient(circle at 50% 80%, rgba(76, 201, 240, 0.1) 0%, transparent 20%);
+        z-index: 0;
+    }
+
+    .main-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        padding: 50px;
+        position: relative;
+        z-index: 1;
+        max-width: 700px;
+        width: 100%;
+        transition: var(--transition);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+    }
+
+    .main-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: var(--gradient);
+    }
+
+    .main-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .success-card {
+        text-align: center;
+        padding: 60px 40px;
+    }
+
+    .page-title {
+        color: var(--dark);
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--gradient);
+        border-radius: 2px;
+    }
+
+    .success-title {
+        color: var(--primary);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .success-icon {
+        font-size: 5rem;
+        color: var(--success);
+        margin-bottom: 30px;
+        display: inline-block;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .success-message {
+        color: var(--dark);
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        opacity: 0.8;
+        line-height: 1.6;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .form-label {
+        color: var(--dark);
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: block;
+        font-size: 1.1rem;
+        transition: var(--transition);
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.8);
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        color: var(--dark);
+        padding: 15px 20px;
+        transition: var(--transition);
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        background: white;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        transform: scale(1.01);
+        color: var(--dark);
+    }
+
+    .form-control::placeholder {
+        color: #9e9e9e;
+    }
+
+    /* File input styling */
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .file-input-label {
+        background: rgba(67, 97, 238, 0.05);
+        border: 2px dashed #c3c3c3;
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        color: #757575;
+        cursor: pointer;
+        transition: var(--transition);
+        display: block;
+    }
+
+    .file-input-label:hover {
+        background: rgba(67, 97, 238, 0.1);
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: scale(1.01);
+    }
+
+    .file-input-label.dragover {
+        background: rgba(67, 97, 238, 0.15);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .file-input-label i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+        color: var(--primary);
+    }
+
+    .file-name {
+        margin-top: 10px;
+        color: var(--success);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .btn-submit {
+        background: var(--gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 18px 40px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+        width: 100%;
+        transition: var(--transition);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+        margin-top: 20px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-submit:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-back {
+        background: var(--gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 15px 35px;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        transition: var(--transition);
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-back:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Loading animation */
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 10px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Help text styling */
+    .help-text {
+        color: #757575;
+        font-size: 0.9rem;
+        margin-top: 8px;
+        font-style: italic;
+    }
+
+    /* Character counter */
+    .char-counter {
+        text-align: right;
+        color: #757575;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    /* Form steps indicator */
+    .form-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    .form-steps::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #e0e0e0;
+        z-index: 1;
+    }
+
+    .step {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #9e9e9e;
+        position: relative;
+        z-index: 2;
+        transition: var(--transition);
+    }
+
+    .step.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    .step.completed {
+        background: var(--success);
+        border-color: var(--success);
+        color: white;
+    }
+
+    .step-label {
+        position: absolute;
+        top: 35px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-size: 0.8rem;
+        color: #9e9e9e;
+    }
+
+    .step.active .step-label {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    /* Progress bar */
+    .progress-container {
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: var(--gradient);
+        border-radius: 3px;
+        transition: width 0.5s ease;
+        width: 0%;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .main-card {
+            padding: 30px 25px;
+            margin: 20px;
+        }
+
+        .page-title, .success-title {
+            font-size: 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .upload-container {
+            padding: 20px 15px;
+        }
+
+        .main-card {
+            padding: 25px 20px;
+        }
+
+        .page-title, .success-title {
+            font-size: 1.8rem;
+        }
+
+        .btn-submit {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+        }
+
+        .file-input-label {
+            padding: 30px 15px;
+        }
+    }
+
+    /* Animation for form elements */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-group {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<div class="upload-container">
+    {% if assignment_uploaded %}
+    <!-- Success State -->
+    <div class="main-card success-card">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1 class="success-title">Assignment Uploaded Successfully!</h1>
+        <p class="success-message">
+            Your assignment has been successfully uploaded and is now available for students. You can view it in the assignments list or upload another one.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'classroom:assignment_list' %}" class="btn-back">
+                <i class="fas fa-tasks"></i> View Assignments
+            </a>
+            <a href="{% url 'classroom:upload_assignment' %}" class="btn-back" style="background: var(--success);">
+                <i class="fas fa-plus"></i> Upload Another
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <!-- Upload Form -->
+    <div class="main-card">
+        <h1 class="page-title">Upload Assignment</h1>
+        
+        <!-- Progress Steps -->
+        <div class="form-steps">
+            <div class="step active">
+                1
+                <span class="step-label">Details</span>
+            </div>
+            <div class="step">
+                2
+                <span class="step-label">File</span>
+            </div>
+            <div class="step">
+                3
+                <span class="step-label">Review</span>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 33%"></div>
+        </div>
+        
+        <form enctype="multipart/form-data" method="post" id="uploadForm">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+                
+                {% if field.field.widget.input_type == 'file' %}
+                <!-- Custom File Input -->
+                <div class="file-input-wrapper">
+                    <div class="file-input-label" id="fileInputLabel">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div>Click to choose file or drag and drop here</div>
+                        <div class="file-name" id="fileName">No file selected</div>
+                    </div>
+                    {{ field }}
+                </div>
+                {% else %}
+                <!-- Regular Form Fields -->
+                {{ field }}
+                {% endif %}
+                
+                {% if field.help_text %}
+                <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span id="btnText">
+                    <i class="fas fa-upload"></i> Upload Assignment
+                </span>
+                <div class="loading" id="loadingSpinner" style="display: none;"></div>
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // File input handling
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileName = document.getElementById('fileName');
+        const fileInputLabel = document.getElementById('fileInputLabel');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    fileName.textContent = this.files[0].name;
+                    fileName.style.color = '#4cc9f0';
+                    
+                    // Update progress steps
+                    updateProgressSteps(2);
+                    document.getElementById('progressBar').style.width = '66%';
+                } else {
+                    fileName.textContent = 'No file selected';
+                    fileName.style.color = '#757575';
+                }
+            });
+
+            // Drag and drop functionality
+            fileInputLabel.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            fileInputLabel.addEventListener('dragleave', function() {
+                this.classList.remove('dragover');
+            });
+
+            fileInputLabel.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    fileName.textContent = e.dataTransfer.files[0].name;
+                    fileName.style.color = '#4cc9f0';
+                    
+                    // Update progress steps
+                    updateProgressSteps(2);
+                    document.getElementById('progressBar').style.width = '66%';
+                }
+            });
+        }
+
+        // Form submission loading state
+        const form = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        if (form) {
+            form.addEventListener('submit', function() {
+                btnText.innerHTML = '<i class="fas fa-spinner"></i> Uploading...';
+                loadingSpinner.style.display = 'inline-block';
+                submitBtn.disabled = true;
+                
+                // Update progress steps
+                updateProgressSteps(3);
+                document.getElementById('progressBar').style.width = '100%';
+            });
+        }
+
+        // Character counter for text areas
+        const textAreas = document.querySelectorAll('textarea');
+        textAreas.forEach(textarea => {
+            const charCount = document.createElement('div');
+            charCount.className = 'char-counter';
+            charCount.textContent = `0 characters`;
+            textarea.parentElement.appendChild(charCount);
+
+            textarea.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                charCount.textContent = `${currentLength} characters`;
+                
+                if (currentLength > 500) {
+                    charCount.style.color = '#ff6b6b';
+                } else {
+                    charCount.style.color = '#757575';
+                }
+            });
+        });
+
+        // Update progress steps
+        function updateProgressSteps(activeStep) {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                if (index < activeStep - 1) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                } else if (index === activeStep - 1) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        // Form field validation and progress update
+        const formFields = document.querySelectorAll('input, textarea, select');
+        formFields.forEach(field => {
+            if (field.type !== 'file') {
+                field.addEventListener('input', function() {
+                    // Check if all required fields are filled
+                    let allFilled = true;
+                    formFields.forEach(f => {
+                        if (f.type !== 'file' && f.required && !f.value) {
+                            allFilled = false;
+                        }
+                    });
+                    
+                    if (allFilled) {
+                        updateProgressSteps(1);
+                        document.getElementById('progressBar').style.width = '33%';
+                    }
+                });
+            }
+        });
+
+        // Auto-focus first input field
+        const firstInput = document.querySelector('input:not([type="hidden"]):not([type="file"]), textarea, select');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    });
+</script>
+
+{% endblock %}

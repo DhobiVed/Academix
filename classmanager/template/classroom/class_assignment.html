@@ -1,0 +1,186 @@
+{% extends 'classroom/base.html' %}
+{% block content %}
+
+<div class="assignment-container">
+  <div class="assignment-card">
+    <div class="assignment-header">
+      <h2><i class="fas fa-book"></i> My Assignments</h2>
+      <p>All your assigned work at one place</p>
+      <span class="badge">{{ student.student_assignment.count }} Total</span>
+    </div>
+
+    {% if student.student_assignment.count == 0 %}
+    <div class="empty">
+      <i class="fas fa-folder-open"></i>
+      <h3>No Assignments Yet</h3>
+      <p>Once your teacher uploads, they’ll appear here.</p>
+    </div>
+    {% else %}
+    <div class="table-responsive">
+      <table class="table assignment-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Assignment</th>
+            <th>Teacher</th>
+            <th>Date</th>
+            <th>Download</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for assignment in student.student_assignment.all %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ assignment.assignment_name }}</td>
+            <td>{{ assignment.teacher }}</td>
+            <td>{{ assignment.created_at|date:"M d, Y" }}</td>
+            <td>
+              <a href="{{ assignment.assignment.url }}" target="_blank" class="btn btn-download">
+                <i class="fas fa-download"></i> Download
+              </a>
+            </td>
+            <td>
+              {% if assignment in assignment_list %}
+              <span class="status submitted"><i class="fas fa-check"></i> Submitted</span>
+              {% else %}
+              <a href="{% url 'classroom:submit_assignment' id=assignment.id %}" class="btn btn-submit">
+                <i class="fas fa-paper-plane"></i> Submit
+              </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+body {
+  background: linear-gradient(135deg, #003366, #0099cc);
+  font-family: "Poppins", sans-serif;
+}
+
+.assignment-container {
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.assignment-card {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  max-width: 1000px;
+  overflow: hidden;
+  animation: fadeIn 0.8s ease;
+}
+
+.assignment-header {
+  background: linear-gradient(135deg, #0066ff, #00ccff);
+  color: white;
+  padding: 25px;
+  text-align: center;
+  position: relative;
+}
+
+.assignment-header h2 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.assignment-header p {
+  margin: 5px 0 0;
+  opacity: 0.9;
+}
+
+.assignment-header .badge {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: white;
+  color: #007bff;
+  padding: 5px 15px;
+  border-radius: 30px;
+  font-weight: 600;
+}
+
+.table {
+  margin: 0;
+}
+
+.table thead {
+  background: #f8f9fa;
+}
+
+.table th {
+  font-weight: 600;
+  color: #333;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: #f1f7ff;
+  transition: 0.3s;
+}
+
+.btn {
+  border-radius: 25px;
+  padding: 5px 12px;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.btn-download {
+  background: #007bff;
+  color: white;
+  border: none;
+}
+
+.btn-download:hover {
+  background: #0056b3;
+}
+
+.btn-submit {
+  background: #28a745;
+  color: white;
+}
+
+.btn-submit:hover {
+  background: #1e7e34;
+}
+
+.status.submitted {
+  background: #e6ffe6;
+  color: #28a745;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty i {
+  font-size: 60px;
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+{% endblock %}

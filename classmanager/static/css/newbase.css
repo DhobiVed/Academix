@@ -1,0 +1,286 @@
+/* ----------------------------- */
+/* Global Reset & Fonts */
+/* ----------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* Smooth color transitions */
+body {
+  background: #f4f7fb;
+  color: #333;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ----------------------------- */
+/* Profile Section */
+/* ----------------------------- */
+.profile {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.profile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,49,107,0.8), rgba(0,0,0,0.8));
+  z-index: 1;
+}
+
+.profile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(80%) blur(1px);
+  transition: transform 10s ease-in-out, filter 0.8s ease;
+}
+
+.profile:hover img {
+  transform: scale(1.1);
+  filter: brightness(90%) blur(0);
+}
+
+/* ----------------------------- */
+/* Profile Box */
+/* ----------------------------- */
+.profile-box {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 600px;
+  padding: 45px 35px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  color: white;
+  animation: fadeInUp 0.8s ease-out;
+  transition: transform 0.4s ease;
+}
+
+.profile-box:hover {
+  transform: translateY(-10px);
+}
+
+/* Profile image */
+.profile-box img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 5px solid rgba(255,255,255,0.8);
+  box-shadow: 0 10px 30px rgba(0, 201, 255, 0.4);
+  object-fit: cover;
+  margin-bottom: 20px;
+  transition: all 0.4s ease;
+}
+
+.profile-box img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 201, 255, 0.6);
+}
+
+/* Profile text */
+.profile-details h1 {
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.profile-details p {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+/* Edit Button */
+.profile-details .edit-button {
+  display: inline-block;
+  padding: 14px 45px;
+  background: linear-gradient(135deg, #00C9FF, #92FE9D);
+  border-radius: 50px;
+  color: #00316b;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 201, 255, 0.3);
+}
+
+.profile-details .edit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 201, 255, 0.4);
+}
+
+/* ----------------------------- */
+/* Student List Section */
+/* ----------------------------- */
+.student-list {
+  background: linear-gradient(to bottom right, #e9f3ff, #fff);
+  padding: 100px 5%;
+  min-height: 100vh;
+  color: #00316b;
+}
+
+.student-list h2 {
+  text-align: center;
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 60px;
+  position: relative;
+}
+
+.student-list h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: #00C9FF;
+  margin: 14px auto 0;
+  border-radius: 2px;
+}
+
+/* Student grid layout */
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 35px;
+  justify-items: center;
+}
+
+/* Student Card */
+.student-box {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+  background: #fff;
+}
+
+.student-box:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+}
+
+.imgBx {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.imgBx img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.6s ease;
+}
+
+.student-box:hover .imgBx img {
+  transform: scale(1.1);
+  opacity: 0.25;
+}
+
+/* Student content */
+.content {
+  position: absolute;
+  inset: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: linear-gradient(to top, rgba(0,49,107,0.9), transparent 70%);
+  color: white;
+  opacity: 1;
+  transition: all 0.5s ease;
+}
+
+.content h3 {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+
+.content p {
+  font-size: 0.95rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s ease 0.1s;
+}
+
+.student-box:hover .content p {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add Button */
+.content .add-button {
+  align-self: flex-start;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #90EE90;
+  color: #00316b;
+  font-weight: 600;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s ease 0.2s;
+}
+
+.student-box:hover .content .add-button {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.content .add-button:hover {
+  background: #75d675;
+  box-shadow: 0 5px 15px rgba(144, 238, 144, 0.4);
+}
+
+/* ----------------------------- */
+/* Animations */
+/* ----------------------------- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----------------------------- */
+/* Responsive */
+/* ----------------------------- */
+@media (max-width: 768px) {
+  .profile-box {
+    padding: 35px 25px;
+  }
+  .profile-details h1 {
+    font-size: 1.9rem;
+  }
+  .student-list h2 {
+    font-size: 2rem;
+  }
+}
